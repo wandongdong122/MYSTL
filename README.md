@@ -209,4 +209,67 @@ emsp;emsp;二叉搜索树具有对数平均时间（logarithmic average time）�
 ## 3.2.7 hash_multiset
 ## 3.2.8 hash_mulmap
 
-# <center>四、算法 #
+# <center>四、算法 #  
+## 算法分类
+1. 质变算法 mutating algorithms ----会改变操作对象的值  
+&emsp;&emsp;所有的STL算法都作用在由迭代器[first,last）所标示出来的区间上。所谓“质变算法”。是指在运算过程中会更改区间内（迭代器所指）的元素内容。诸如拷贝（copy）、互换（swap）、替换（replace）、填写（fill）、删除（remove）、排列组合（permutation）、分割（partition）、随机重排（random shuffling）、排序（sort）等算法。**因为这一类算法需要修改迭代器所指向的内容，因此不能使用const iterator。**  
+	1.	in-place(就地进行)，就地改变其操作对象
+	2.	copy（另地进行）。将操作对象的内容复制一份副本，然后再副本上进行修改并返回该副本。copy版总是以_copy作为函数名称词尾。
+2. 非质变算法 nonmutating algorithms ----不改变操作对象的值  
+&emsp;&emsp;所有的STL算法都作用在由迭代器[first,last）所标示出来的区间上。所谓“非质变算法”，是指运算过程中不会更改区间内（迭代器所指）的元素内容。诸如查找(find)、匹配（search）、计数(count)、巡访(for_each)、比较(equal.mismatch)、寻找极值（min、max）等算法。  
+
+### 数值算法 <stl_numeric.h> --- #include <-numeric->
+#### 常用数值算法
+1. accumulate(... ,int init) 将迭代器范围的元素按照规则累加到初始值init上。
+2. adjacent_differencr  计算[first,last)中相邻元素的差额。
+3. inner_product 计算[first1,last1)和[first2,last2）的一般内积。
+4. partial_sum  用来计算局部总和，它会将*first 赋值给 *result，将 *first 和 *result的和赋值给*（result+1）。
+5. power 用来计算某数的n幂次方。
+6. iota 用来设定某个区间的内容，使其内每一个元素从指定的value值开始，呈现递增状态。它改变了区间内容，所以是质变算法。
+
+### 基本算法 <stl_algobase.h> --- #include <-algorithm->
+#### 常用基本算法
+1. equal 如果两个序列在[first,last)区间内相等，equal()返回true。如果第二序列的元素比较多，多出来的元素不予考虑
+2. fill 将[first,last)内的所有元素改填新值。
+3. fill_n 将[first,last)内前n个元素改填新值，返回的迭代器指向被填入的最后一个元素的下一个位置。
+4. iter_swap 将两个迭代器所指对象对调。
+5. copy 把 [first, last)区间内的元素拷贝到 [result, result + (last - first))内。
+6. lexicographical_compare 以“字典排列方式”对两个序列[first1,last1)和[first2,last2)进行比较。比较操作针对两个序列中的对应位置上的元素进行。如果第一个序列小于第二个序列，返回true，否则返回false。
+7. copy_backward 将 [first, last)区间内的元素拷贝到 [result - (last - first), result)内。
+8. max 取二者中的较大值，语义相等时保证返回第一个参数。
+9. min 取二者中的较小值，语义相等时保证返回第一个参数。
+10. mismatch 用来平行比较两个序列，指出两者之间的第一个不匹配点。返回一对迭代器，分别指向两序列中的不匹配点。
+11. swap 用来交换两个对象的内容。
+#### set相关算法
+&emsp;&emsp;STL一共提供了四种与set（集合）相关的算法，分别是并集（union）、交集（intersection）、差集（difference）、对称差集（symmetric difference）。
+1. set_union 计算 S1∪S2 的结果并保存到 result 中，返回一个迭代器指向输出结果的尾部。
+2. set_intersection 计算 S1∩S2 的结果并保存到 result 中，返回一个迭代器指向输出结果的尾部。
+3. set_difference 计算 S1-S2 的结果并保存到 result 中，返回一个迭代器指向输出结果的尾部。
+4. set_symmetric_difference 计算 (S1-S2)∪(S2-S1) 的结果并保存到 result 中，返回一个迭代器指向输出结果的尾部
+#### heap相关算法
+1. push_heap
+2. pop_heap
+3. sort_heap
+4. make_heap
+# <center>五、仿函数  
+## 头文件   #include<-functional->  
+&emsp;&emsp;仿函数：一种具有函数特质的对象。现在所采用的名称是函数对象。  
+&emsp;&emsp;要将某种“操作”当做算法的参数，唯一的办法就是先将该操作（可能拥有数条以上的指令）设计为一个函数，再将函数指针当做算法的一个参数；或者将该操作设计为一个所谓的仿函数（在语言层面而言就是class），再以该仿函数产生一个对象，并以此对象作为算法的一个参数。
+
+&emsp;&emsp;函数指针不能满足STL对抽象性的要求，也不能满足软件积木的要求--函数指针无法和STL其他组件（如配接器adapter）搭配，产生更灵活的变化。  
+&emsp;&emsp;就实现观点而言，仿函数其实就是一个“行为类似函数”的对象。其类别定义中必须自定义函数调用运算子（operator() ）。拥有这样的运算子后，我们就可以在仿函数的对象后面加上一对小括号，以此调用仿函数所定义的operator()。   
+## 仿函数分类
+### 以操作数的个数划分
+1. 一元仿函数
+2. 二元仿函数
+### 以功能划分
+1. 算术运算
+2. 关系运算
+3. 逻辑运算
+# <center>六、配接器
+## 定义：
+&emsp;&emsp;将一个class的接口转换成另一个class的接口，使原本因接口不兼容而不能合作的classes，可以一起运作。  
+## 分类
+1. 容器配接器
+2. 迭代器配接器
+3. 仿函数配接器
